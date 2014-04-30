@@ -68,7 +68,7 @@ class Server:
 
             if cli_socket != client_socket:
 
-                cli_socket.send(message)
+                cli_socket[1].send(message)
 
 
     def kill_client_connection(self, client_hash):

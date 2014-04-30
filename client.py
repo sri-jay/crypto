@@ -53,6 +53,7 @@ def get_from_server(text_area, server_socket):
 
         message = decipher.decrypt(message)
         text_area.insert(Tkinter.INSERT, message)
+        text_area.insert(Tkinter.INSERT, "\n\n\n")
 
 
 def send_to_server():
@@ -75,18 +76,18 @@ def send_to_server():
     E1.delete(0, len(E1.get()))
 
 
-
+# Setup TKinter UI
 top = Tkinter.Tk()
 text_area = Tkinter.Text(top)
 
-text_area.pack(side = Tkinter.TOP)
+text_area.pack(side=Tkinter.TOP)
 
-E1 = Tkinter.Entry(top, bd =5, width = 100)
+E1 = Tkinter.Entry(top, bd=5, width = 100)
 
-E1.pack(side = Tkinter.RIGHT)
+E1.pack(side=Tkinter.RIGHT)
 
 button_send = Tkinter.Button(top, text="Send Message!", command=send_to_server)
-button_send.pack(side = Tkinter.RIGHT)
+button_send.pack(side=Tkinter.RIGHT)
 
 
 th = Thread(target=get_from_server, args=(text_area, server_socket,))
@@ -94,6 +95,6 @@ th.start()
 lib.append(th)
 
 top.mainloop()
-
+#End Tkinter UI
 
 
