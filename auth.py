@@ -4,7 +4,7 @@ from Crypto.Hash import MD5
 from datetime import datetime
 
 #creating logfile
-log = open("auth_server_log.txt", "w")
+log = open("logs/auth_server_log.txt", "a")
 
 #auth start log
 log_data = "Started Auth Server @"+str(datetime.now())+"\n"
@@ -28,11 +28,12 @@ client_welcome.listen(10)
 server_auth.send(auth_hash)
 
 #auth log
-log_data = str(datetime.now()) + " : "+"registered with Server @"+str(datetime.now())+"\n"
+log_data = str(datetime.now()) + " : "+"registered with Server @ "+str(datetime.now())+"\n"
+print log_data
 log.write(log_data)
 #end log
 
-#accepting clients and verifyting their identitiy
+#accepting clients and verifying their identity
 while True:
 
     client_socket, client_data = client_welcome.accept()
@@ -43,6 +44,7 @@ while True:
 
     #loggging start
     log_data = str(datetime.now()) + " : " + "Attempt To connect with hash : "+client_hash+"\n"
+    print log_data
     log.write(log_data)
     #logging end
 
@@ -63,6 +65,7 @@ while True:
 
         #logging begin
         log_data = str(datetime.now())+" : "+client_auth_token+" has authenticated " + "\n"
+        print log_data
         log.write(log_data)
         #logging end
 
@@ -70,6 +73,7 @@ while True:
 
         #logging start
         log_data = str(datetime.now())+" : "+client_hash+" has failed authentication"+"\n"
+        print log_data
         #logging end
 
         client_socket.send("Invalid hash, you are being disconnected")

@@ -3,7 +3,6 @@ from datetime import datetime
 from threading import Thread
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-import Tkinter
 
 
 class Server:
@@ -13,18 +12,20 @@ class Server:
     THREADS = []
 
     connection_limit = 10
-    logfile = open("log.txt", "w")
-    thread_log = open("thread_log.txt", "w")
+    logfile = open("logs/log.txt", "a")
+    thread_log = open("logs/thread_log.txt", "a")
 
-    key_1 = open("pvtkey_server_decode.pem", "r")
-    key_2 = open("pubkey_server_encode.pem", "r")
+    key_1 = open("Keys/pvtkey_server_decode.pem", "r")
+    key_2 = open("Keys/pubkey_server_encode.pem", "r")
 
     decrypt_client_traffic = RSA.importKey(key_1.read())
     encrypt_server_reply = RSA.importKey(key_2.read())
 
+    #cipher and decipher setup
     decipher = PKCS1_OAEP.new(decrypt_client_traffic)
     cipher = PKCS1_OAEP.new(encrypt_server_reply)
 
+    #constructor
     def __init__(self):
 
         start_message = "Started server instance @"+str(datetime.now())
@@ -35,8 +36,7 @@ class Server:
         listen_.start()
         self.THREADS.append(listen_)
 
-
-        #self.listen_for_clients()
+    #verify client hash against CLIENT_AUTH_HASHES
     def verify_client(self, client_hash):
 
         print "Verifying client hash :", client_hash
@@ -58,10 +58,10 @@ class Server:
 
                     client_is_valid = True
 
-        print "Client Validity : ",client_is_valid
+        print "Client Validity : ", client_is_valid
         return client_is_valid
 
-
+    #sends message to all clients except client_socket
     def send_to_all_clients(self, message, client_socket):
 
         for cli_socket in self.CLIENT_SOCKETS:
@@ -70,7 +70,7 @@ class Server:
 
                 cli_socket[1].send(message)
 
-
+    #closes and removes client from CLIENT_SOCKETS
     def kill_client_connection(self, client_hash):
 
         for client in self.CLIENT_SOCKETS:
@@ -81,6 +81,7 @@ class Server:
 
                 self.CLIENT_SOCKETS.remove(client)
 
+                print client_hash, "Has been Removed"
 
     def send_to_client(self, cli_socket, message):
 
@@ -117,7 +118,7 @@ class Server:
 
             client_hash = auth_server_socket.recv(1024)
             print "Received hash from auth server : ", client_hash
-            print "Length : ",len(client_hash)
+            print "Length : ", len(client_hash)
             self.CLIENT_AUTH_HASHES.append(client_hash)
 
 
@@ -135,8 +136,6 @@ class Server:
 
         while self.connection_limit != 0:
 
-            print self.connection_limit
-
             client_socket, data = welcome_socket.accept()
 
             self.logfile.write("\n")
@@ -149,8 +148,8 @@ class Server:
 
             client_auth_hash = client_auth_hash[0]
 
-            print "Received hash from client:",client_auth_hash
-            print "Length : ",len(client_auth_hash)
+            print "Received hash from client:", client_auth_hash
+            print "Length : ", len(client_auth_hash)
 
             if self.verify_client(client_auth_hash) == "auth_server":
 
