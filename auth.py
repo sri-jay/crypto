@@ -19,7 +19,7 @@ clients = []
 client_welcome = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
 server_auth = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
 
-#connecting to server andd setup client sockets
+#connecting to server and setup client sockets
 server_auth.connect(("127.0.0.1", 12356))
 client_welcome.bind(("127.0.0.1", 56789))
 client_welcome.listen(10)
